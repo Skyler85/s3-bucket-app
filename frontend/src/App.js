@@ -15,7 +15,8 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          제발 바뀌어라!!!! <br />
+          내일은 토요일
         </a>
       </header>
     </div>
