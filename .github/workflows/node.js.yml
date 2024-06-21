@@ -2,9 +2,9 @@ name: frontend CI
 
 on:
   push:
-    branches: [ frontend ]
+    branches: [ "frontend" ]  # frontend 브랜치에서 push 이벤트 발생 시 실행
   pull_request:
-    branches: [ frontend ]
+    branches: [ "frontend" ]  # frontend 브랜치에서 pull request 이벤트 발생 시 실행
 
 jobs:
   build-test-deploy:
@@ -16,12 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
 
     - name: List root directory
       run: ls -al
@@ -29,26 +23,26 @@ jobs:
     - name: List frontend directory
       run: ls -al frontend
 
+    - name: Change directory to frontend
+      run: cd frontend
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
     - name: ⬇️의존성 설치
-      working-directory: ./frontend
       run: npm install
+      working-directory: ./frontend
 
     - name: ✅ 유닛 테스트
-      working-directory: ./frontend
       run: npm test
+      working-directory: ./frontend
 
     - name: 📦 프로젝트 빌드
-      working-directory: ./frontend
       run: npm run build
+      working-directory: ./frontend
 
     # AWS S3
     - name: ⬆️ S3 업로드
-      uses: awact/s3-action@master
-      with:
-        args: --acl public-read --follow-symlinks --delete
-      env:
-        SOURCE_DIR: './frontend/build'  # 빌드된 정적 파일이 위치하는 디렉토리
-        AWS_REGION: 'ap-northeast-2'
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
