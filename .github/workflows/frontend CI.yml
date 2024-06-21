@@ -9,7 +9,7 @@ on:
       - frontend
 
 jobs:
-  build-test-deploy:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -17,7 +17,8 @@ jobs:
         node-version: [20.x]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Clear npm cache
       run: npm cache clean --force
@@ -25,21 +26,20 @@ jobs:
     - name: ✅ 노드 버전 업그레이드 20.x
       uses: actions/setup-node@v3
       with:
-        node-version: 20.x
+        node-version: ${{ matrix.node-version }}
         cache: 'npm'
-
-    - name: Cache npm dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
 
     - name: ⬇️의존성 설치
       run: npm install
       working-directory: ./frontend
 
+    - name: Debug output
+      run: |
+        echo "Current directory contents: $(ls -l)"
+        node --version
+        npm --version
+      working-directory: ./frontend
+        
     - name: ✅ 유닛 테스트
       run: npm test
       working-directory: ./frontend
