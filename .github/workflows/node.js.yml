@@ -23,9 +23,11 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
-    - name: Check for lock file
-      working-directory: ./frontend
+    - name: List root directory
       run: ls -al
+
+    - name: List frontend directory
+      run: ls -al frontend
 
     - name: ⬇️의존성 설치
       working-directory: ./frontend
@@ -45,7 +47,7 @@ jobs:
       with:
         args: --acl public-read --follow-symlinks --delete
       env:
-        SOURCE_DIR: './frontend/dist'  # 빌드된 정적 파일이 위치하는 디렉토리
+        SOURCE_DIR: './frontend/build'  # 빌드된 정적 파일이 위치하는 디렉토리
         AWS_REGION: 'ap-northeast-2'
         AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
