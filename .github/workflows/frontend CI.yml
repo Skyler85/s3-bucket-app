@@ -19,6 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clear npm cache
+      run: npm cache clean --force
+
     - name: ✅ 노드 버전 업그레이드 20.x
       uses: actions/setup-node@v3
       with:
